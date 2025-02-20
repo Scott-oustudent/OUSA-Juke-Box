@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OUSA Jukebox</title>
+</head>
+<body>
+    <h1>OUSA Jukebox</h1>
+    <form action="{{ url_for('search') }}" method="post">
+        <label for="track_name">Enter the name of the track you want to request:</label>
+        <input type="text" id="track_name" name="track_name">
+        <button type="submit">Request Track</button>
+    </form>
+
+    {% if tracks %}
+    <h2>Search results:</h2>
+    <form action="{{ url_for('authorize') }}" method="post">
+        <ul>
+            {% for idx, track in enumerate(tracks) %}
+            <li>
+                <input type="radio" id="track{{ idx }}" name="track_index" value="{{ idx }}">
+                <label for="track{{ idx }}">{{ track['name'] }} by {% for artist in track['artists'] %}{{ artist['name'] }}{% if not loop.last %}, {% endif %}{% endfor %}</label>
+            </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Authorize Track</button>
+    </form>
+    {% endif %}
+
+    <h2>Select a device for playback:</h2>
+    <form action="{{ url_for('list_devices') }}" method="get">
+        <button type="submit">List Devices</button>
+    </form>
+
+    {% if devices %}
+    <form action="{{ url_for('authorize') }}" method="post">
+        <select name="device_id">
+            {% for device in devices %}
+            <option value="{{ device['id'] }}">{{ device['name'] }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Authorize Track</button>
+    </form>
+    {% endif %}
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+</body>
+</html>
