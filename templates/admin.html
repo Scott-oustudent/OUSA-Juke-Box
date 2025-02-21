@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="admin-page">
+    <h1>Admin Panel</h1>
+    <h2>User Management</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>
+                    <form action="{{ url_for('update_role') }}" method="post" style="display:inline;">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <select name="role">
+                            <option value="user" {% if user.role=='user' %}selected{% endif %}>User</option>
+                            <option value="music_manager" {% if user.role=='music_manager' %}selected{% endif %}>Music Manager</option>
+                            <option value="administrator" {% if user.role=='administrator' %}selected{% endif %}>Administrator</option>
+                        </select>
+                        <button type="submit">Update Role</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{{ url_for('reset_password') }}" method="post" style="display:inline;">
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button type="submit">Reset Password</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+
+

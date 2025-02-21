@@ -3,25 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OUSA Jukebox - User</title>
+    <title>OUSA Jukebox - Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function validateForm() {
+            var trackIndex = document.querySelector('input[name="track_index"]:checked');
+            if (!trackIndex) {
+                alert("No Track selected, please click a track first before authorising!");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
-<body class="user-page">
-    <h1>OUSA Jukebox - User</h1>
+<body class="manager-page">
+    <h1>OUSA Jukebox - Manager</h1>
     {% if current_user.is_authenticated %}
     <p>Welcome, {{ current_user.username }}! <a href="{{ url_for('logout') }}">Logout</a></p>
     {% else %}
     <p><a href="{{ url_for('login') }}">Login</a> | <a href="{{ url_for('register') }}">Register</a></p>
     {% endif %}
-    <form action="{{ url_for('search') }}" method="post">
-        <label for="track_name">Enter the name of the track you want to request:</label>
-        <input type="text" id="track_name" name="track_name" required>
-        <button type="submit">Search</button>
+
+    <h2>Select a device for playback:</h2>
+    <form action="{{ url_for('list_devices') }}" method="get">
+        <button type="submit">List Devices</button>
     </form>
 
-    {% if tracks %}
-    <h2>Search results:</h2>
-    <form action="{{ url_for('request_track') }}" method="post">
+    {% if devices %}
+    <form action="{{ url_for('authorize') }}" method="post" onsubmit="return validateForm()">
+        <select name="device_id" required>
+            <option value="" disabled selected>Select a device</option>
+            {% for device in devices %}
+            <option value="{{ device['id'] }}">{{ device['name'] }}</option>
+            {% endfor %}
+        </select>
+
+        <h2>Select a track to authorize:</h2>
+        {% if tracks %}
         <ul>
             {% for idx in range(tracks|length) %}
             <li>
@@ -30,7 +48,9 @@
             </li>
             {% endfor %}
         </ul>
-        <button type="submit">Request Track</button>
+        {% endif %}
+
+        <button type="submit">Authorize Track</button>
     </form>
     {% endif %}
 
@@ -52,8 +72,3 @@
     {% endwith %}
 </body>
 </html>
-
-
-
-
-
