@@ -59,11 +59,14 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
-            login_user(user)
-            return redirect(url_for('index'))
+        if user:
+            if check_password_hash(user.password, password):
+                login_user(user)
+                return redirect(url_for('index'))
+            else:
+                flash('Invalid password')
         else:
-            flash('Invalid username or password')
+            flash('Invalid username')
     return render_template('login.html')
 
 @app.route('/logout')
@@ -234,3 +237,4 @@ if __name__ == '__main__':
             db.session.commit()
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=True, host='0.0.0.0', port=port)
+
