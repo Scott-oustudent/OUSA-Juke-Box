@@ -232,8 +232,5 @@ if __name__ == '__main__':
             admin_user = User(username='zx810530@open.ac.uk', password=generate_password_hash('defaultpassword', method='pbkdf2:sha256'), role='administrator')
             db.session.add(admin_user)
             db.session.commit()
-    app.run(debug=True)
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-   
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, host='0.0.0.0', port=port)
